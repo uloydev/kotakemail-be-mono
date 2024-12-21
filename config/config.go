@@ -1,35 +1,27 @@
 package config
 
-import "github.com/spf13/viper"
+import (
+	"github.com/spf13/viper"
+	appcontext "kotakemail.id/pkg/context"
+)
 
-type BaseConfig struct {
+type Config struct {
+	Rest        RestConfig       `mapstructure:"rest"`
+	Grpc        GrpcConfig       `mapstructure:"grpc"`
 	Environment string           `mapstructure:"environment"`
 	AppName     string           `mapstructure:"app_name"`
 	Databases   []DatabaseConfig `mapstructure:"databases"`
 	Storages    []StorageConfig  `mapstructure:"storages"`
-
-	Logging LoggingConfig `mapstructure:"logging"`
-}
-
-type RestConfig struct {
-	BaseConfig
-	Server struct {
-		Host     string `mapstructure:"host"`
-		Port     string `mapstructure:"port"`
-		BasePath string `mapstructure:"base_path"`
-	} `mapstructure:"server"`
+	Logging     LoggingConfig    `mapstructure:"logging"`
 }
 
 type GrpcConfig struct {
-	BaseConfig
-	Server struct {
-		Host string `mapstructure:"host"`
-		Port string `mapstructure:"port"`
-	} `mapstructure:"server"`
+	Host string `mapstructure:"host"`
+	Port string `mapstructure:"port"`
 }
 
-func NewConfig[C any](path, name string) (c *C, err error) {
-	c = new(C)
+func NewConfig(ctx *appcontext.AppContext, path, name string) (c *Config, err error) {
+	c = &Config{}
 	vp := viper.New()
 	vp.AddConfigPath(path)
 	vp.SetConfigName(name)
@@ -39,6 +31,9 @@ func NewConfig[C any](path, name string) (c *C, err error) {
 		return nil, err
 	}
 	vp.Unmarshal(c)
+
+	ctx.Set(appcontext.AppNameKey, c.AppName)
+	ctx.Set(appcontext.EnvironmentKey, c.Environment)
 
 	return c, nil
 

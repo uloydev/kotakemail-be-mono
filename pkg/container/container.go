@@ -78,10 +78,12 @@ func (c *Container) Run() {
 		}(command)
 	}
 
+	wg.Add(1)
 	go func() {
 		<-sigint // Wait for a signal to stop
 		close(stop)
 		c.Shutdown()
+		wg.Done()
 	}()
 
 	wg.Wait()

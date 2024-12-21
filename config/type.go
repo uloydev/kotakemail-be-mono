@@ -62,3 +62,9 @@ type StorageConfig struct {
 	SecretKey        string      `mapstructure:"secret_key,omitempty"`
 	Bucket           string      `mapstructure:"bucket,omitempty"`
 }
+
+type RestConfig struct {
+	Host     string `mapstructure:"host"`
+	Port     string `mapstructure:"port"`
+	BasePath string `mapstructure:"base_path"`
+}

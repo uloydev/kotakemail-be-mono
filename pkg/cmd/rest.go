@@ -11,7 +11,7 @@ import (
 
 type RestCommand struct {
 	name        string
-	cfg         *config.RestConfig
+	cfg         *config.Config
 	logger      *logger.Logger
 	app         *fiber.App
 	routes      []*rest.RestRoute
@@ -19,7 +19,7 @@ type RestCommand struct {
 }
 
 func NewRestCommand(
-	cfg *config.RestConfig,
+	cfg *config.Config,
 	logger *logger.Logger,
 	routes []*rest.RestRoute,
 	middlewares ...fiber.Handler,
@@ -40,7 +40,7 @@ func NewRestCommand(
 
 func (r *RestCommand) Execute() error {
 	r.logger.Info().Msg("starting rest server")
-	router := r.app.Group(r.cfg.Server.BasePath)
+	router := r.app.Group(r.cfg.Rest.BasePath)
 
 	for _, middleware := range r.middlewares {
 		router.Use(middleware)
@@ -50,7 +50,7 @@ func (r *RestCommand) Execute() error {
 		route.Register(router)
 	}
 
-	return r.app.Listen(fmt.Sprintf("%s:%s", r.cfg.Server.Host, r.cfg.Server.Port))
+	return r.app.Listen(fmt.Sprintf("%s:%s", r.cfg.Rest.Host, r.cfg.Rest.Port))
 }
 
 func (r *RestCommand) Shutdown() error {
