@@ -6,6 +6,7 @@ import (
 	"sync"
 	"syscall"
 
+	"kotakemail.id/config"
 	"kotakemail.id/pkg/cmd"
 	appcontext "kotakemail.id/pkg/context"
 	"kotakemail.id/pkg/database"
@@ -38,6 +39,36 @@ func (c *Container) AddDatabase(db ...database.Database) {
 	for _, d := range db {
 		c.databases[d.Name()] = d
 	}
+}
+
+func (c *Container) InitDB(cfg *config.Config) (err error) {
+	for _, dbCfg := range cfg.Databases {
+		var db database.Database
+		switch dbCfg.Type {
+		case config.DB_MONGO:
+			db, err = database.NewMongoDB(&dbCfg, c.logger)
+		}
+		if err != nil {
+			return err
+		}
+		c.AddDatabase(db)
+	}
+	return nil
+}
+
+func (c *Container) InitStorage(cfg *config.Config) (err error) {
+	for _, storageCfg := range cfg.Storages {
+		var stor storage.Storage
+		switch storageCfg.Type {
+		case config.STORAGE_LOCAL:
+			stor, err = storage.NewLocalStorage(&storageCfg, c.logger)
+		}
+		if err != nil {
+			return err
+		}
+		c.AddStorage(stor)
+	}
+	return nil
 }
 
 func (c *Container) AddStorage(storage ...storage.Storage) {

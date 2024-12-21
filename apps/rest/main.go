@@ -8,9 +8,7 @@ import (
 	"kotakemail.id/pkg/cmd"
 	"kotakemail.id/pkg/container"
 	appcontext "kotakemail.id/pkg/context"
-	"kotakemail.id/pkg/database"
 	"kotakemail.id/pkg/logger"
-	"kotakemail.id/pkg/storage"
 )
 
 func main() {
@@ -23,31 +21,16 @@ func main() {
 	appLogger := logger.NewLogger(ctx, &cfg.Logging)
 
 	container := container.NewContainer(ctx, appLogger)
+
+	if err := container.InitDB(cfg); err != nil {
+		appLogger.Fatal().Err(err).Msg("can't connect to database")
+	}
+
+	if err := container.InitStorage(cfg); err != nil {
+		appLogger.Fatal().Err(err).Msg("can't connect to storage")
+	}
+
 	container.AddCommand(cmd.NewRestCommand(cfg, appLogger, routes.GetRoutes()))
-
-	for _, dbCfg := range cfg.Databases {
-		var db database.Database
-		switch dbCfg.Type {
-		case config.DB_MONGO:
-			db, err = database.NewMongoDB(&dbCfg, appLogger)
-		}
-		if err != nil {
-			appLogger.Fatal().Err(err).Msg("can't connect to database")
-		}
-		container.AddDatabase(db)
-	}
-
-	for _, storageCfg := range cfg.Storages {
-		var stor storage.Storage
-		switch storageCfg.Type {
-		case config.STORAGE_LOCAL:
-			stor, err = storage.NewLocalStorage(&storageCfg, appLogger)
-		}
-		if err != nil {
-			appLogger.Fatal().Err(err).Msg("can't connect to database")
-		}
-		container.AddStorage(stor)
-	}
 
 	container.Run()
 }
