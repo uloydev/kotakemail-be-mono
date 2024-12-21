@@ -89,7 +89,3 @@ func (l *Logger) Fatal() *zerolog.Event {
 func (l *Logger) Panic() *zerolog.Event {
 	return l.logger.Panic()
 }
-
-func (l *Logger) Shutdown() {
-	l.logger.Info().Msg("Shutting down logger")
-}

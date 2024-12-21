@@ -1,6 +1,7 @@
 package cmd
 
 type Command interface {
-	Execute()
-	Shutdown()
+	Name() string
+	Execute() error
+	Shutdown() error
 }

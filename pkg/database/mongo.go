@@ -7,30 +7,40 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 	"kotakemail.id/config"
-	"kotakemail.id/shared/interfaces"
+	"kotakemail.id/pkg/logger"
 )
 
 type MongoDB struct {
 	*BaseDatabase
 	client *mongo.Client
-	URI    string
+	logger *logger.Logger
+	cfg    *config.DatabaseConfig
+	uri    string
 }
 
-func NewMongoDB(cfg config.DatabaseConfig) (interfaces.Datastore[*mongo.Client], error) {
+func NewMongoDB(cfg *config.DatabaseConfig, appLogger *logger.Logger) (Database, error) {
 	uri := fmt.Sprintf("mongodb://%s:%s@%s:%d/%s", cfg.Username, cfg.Password, cfg.Host, cfg.Port, cfg.Database)
 
+	appLogger.Info().Msgf("connecting to mongodb: %s", uri)
 	client, err := mongo.Connect(options.Client().ApplyURI(uri))
 	if err != nil {
+		appLogger.Error().Err(err).Msg("failed to connect to mongodb server")
 		return nil, err
 	}
-	return &MongoDB{
+	appLogger.Info().Msg("connected to mongodb server")
+	db := &MongoDB{
 		BaseDatabase: &BaseDatabase{},
-		URI:          uri,
+		uri:          uri,
+		cfg:          cfg,
+		logger:       appLogger,
 		client:       client,
-	}, nil
+	}
+
+	db.SetName(cfg.Name)
+	return db, nil
 }
 
-func (m *MongoDB) GetConnection() *mongo.Client {
+func (m *MongoDB) GetConnection() interface{} {
 	return m.client
 }
 

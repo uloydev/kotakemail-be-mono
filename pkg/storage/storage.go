@@ -66,4 +66,5 @@ type Storage interface {
 	Read(ctx *appcontext.AppContext, path string, options *ReaderOptions) (*File, error)
 	Delete(ctx *appcontext.AppContext, path string) error
 	GetURL(ctx *appcontext.AppContext, path string) (string, error)
+	Shutdown() error
 }

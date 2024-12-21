@@ -17,12 +17,20 @@ type LocalStorage struct {
 	logger *logger.Logger
 }
 
-func NewLocalStorage(cfg *config.StorageConfig, appLogger *logger.Logger) Storage {
+func NewLocalStorage(cfg *config.StorageConfig, appLogger *logger.Logger) (Storage, error) {
+	appLogger.Info().Msgf("initializing local storage: %s", cfg.Name)
+	if _, err := os.Stat(cfg.BasePath); os.IsNotExist(err) {
+		if err := os.MkdirAll(cfg.BasePath, 0755); err != nil {
+			appLogger.Error().Err(err).Msg("failed to create directory")
+			return nil, err
+		}
+	}
+	appLogger.Info().Msgf("local storage initialized: %s", cfg.Name)
 	return &LocalStorage{
 		name:   cfg.Name,
 		cfg:    cfg,
 		logger: appLogger,
-	}
+	}, nil
 }
 
 func (s *LocalStorage) Name() string {
@@ -106,4 +114,8 @@ func (s *LocalStorage) wrapError(path string, err error) error {
 
 	s.logger.Error().Err(err).Msg("failed to perform operation")
 	return err
+}
+
+func (s *LocalStorage) Shutdown() error {
+	return nil
 }
