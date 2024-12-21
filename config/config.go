@@ -2,24 +2,34 @@ package config
 
 import "github.com/spf13/viper"
 
-type Config struct {
-	Environment string `mapstructure:"environment"`
-	Databases   []struct {
-		Host     string `mapstructure:"host"`
-		Port     int    `mapstructure:"port"`
-		User     string `mapstructure:"user"`
-		Password string `mapstructure:"password"`
-		Name     string `mapstructure:"name"`
-		Type     string `mapstructure:"type"`
-	} `mapstructure:"databases"`
-	Logging struct {
-		Level  string `mapstructure:"level"`
-		Output string `mapstructure:"output"`
-	} `mapstructure:"logging"`
+type BaseConfig struct {
+	Environment string           `mapstructure:"environment"`
+	AppName     string           `mapstructure:"app_name"`
+	Databases   []DatabaseConfig `mapstructure:"databases"`
+	Storages    []StorageConfig  `mapstructure:"storages"`
+
+	Logging LoggingConfig `mapstructure:"logging"`
 }
 
-func NewConfig(path, name string) (c *Config, err error) {
-	c = &Config{}
+type RestConfig struct {
+	BaseConfig
+	Server struct {
+		Host     string `mapstructure:"host"`
+		Port     string `mapstructure:"port"`
+		BasePath string `mapstructure:"base_path"`
+	} `mapstructure:"server"`
+}
+
+type GrpcConfig struct {
+	BaseConfig
+	Server struct {
+		Host string `mapstructure:"host"`
+		Port string `mapstructure:"port"`
+	} `mapstructure:"server"`
+}
+
+func NewConfig[C any](path, name string) (c *C, err error) {
+	c = new(C)
 	vp := viper.New()
 	vp.AddConfigPath(path)
 	vp.SetConfigName(name)
