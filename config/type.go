@@ -53,10 +53,12 @@ const (
 )
 
 type StorageConfig struct {
-	Type      string `mapstructure:"type"`
-	BasePath  string `mapstructure:"base_path, omitempty"`
-	EndPoint  string `mapstructure:"end_point,omitempty"`
-	AccessKey string `mapstructure:"access_key,omitempty"`
-	SecretKey string `mapstructure:"secret_key,omitempty"`
-	Bucket    string `mapstructure:"bucket,omitempty"`
+	Name             string      `mapstructure:"name"`
+	DeliveryBasePath string      `mapstructure:"delivery_base_path"`
+	Type             StorageType `mapstructure:"type"`
+	BasePath         string      `mapstructure:"base_path, omitempty"`
+	EndPoint         string      `mapstructure:"end_point,omitempty"`
+	AccessKey        string      `mapstructure:"access_key,omitempty"`
+	SecretKey        string      `mapstructure:"secret_key,omitempty"`
+	Bucket           string      `mapstructure:"bucket,omitempty"`
 }

@@ -19,4 +19,8 @@ storages:
     access_key: myaccesskey
     secret_key: mysecretkey
     bucket: mybucket
+    name: test-bucket
+  - type: LOCAL
+    name: local-storage
+    base_path: ./runtime/storage
 
