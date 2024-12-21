@@ -46,7 +46,7 @@ func NewLogger(ctx *appcontext.AppContext, cfg *config.LoggingConfig) *Logger {
 
 	return &Logger{
 		cfg: cfg,
-		logger: zerolog.New(zerolog.MultiLevelWriter(writers...)).With().
+		logger: zerolog.New(io.MultiWriter(writers...)).With().
 			Str("service", ctx.GetStr(appcontext.AppNameKey)).
 			Str("ENV", ctx.GetStr(appcontext.EnvironmentKey)).
 			Timestamp().
@@ -64,4 +64,32 @@ func initLogRotator(cfg *config.LoggingConfig) *lumberjack.Logger {
 		Compress:   cfg.Compress,   // Compress old log files
 	}
 
+}
+
+func (l *Logger) Debug() *zerolog.Event {
+	return l.logger.Debug()
+}
+
+func (l *Logger) Info() *zerolog.Event {
+	return l.logger.Info()
+}
+
+func (l *Logger) Warn() *zerolog.Event {
+	return l.logger.Warn()
+}
+
+func (l *Logger) Error() *zerolog.Event {
+	return l.logger.Error()
+}
+
+func (l *Logger) Fatal() *zerolog.Event {
+	return l.logger.Fatal()
+}
+
+func (l *Logger) Panic() *zerolog.Event {
+	return l.logger.Panic()
+}
+
+func (l *Logger) Shutdown() {
+	l.logger.Info().Msg("Shutting down logger")
 }
