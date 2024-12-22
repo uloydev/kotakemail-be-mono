@@ -63,8 +63,16 @@ type StorageConfig struct {
 	Bucket           string      `mapstructure:"bucket,omitempty"`
 }
 
-type RestConfig struct {
-	Host     string `mapstructure:"host"`
-	Port     string `mapstructure:"port"`
+type SwaggerConfig struct {
 	BasePath string `mapstructure:"base_path"`
+	FilePath string `mapstructure:"file_path"`
+	Path     string `mapstructure:"path"`
+	Title    string `mapstructure:"title"`
+}
+
+type RestConfig struct {
+	Host     string        `mapstructure:"host"`
+	Port     string        `mapstructure:"port"`
+	BasePath string        `mapstructure:"base_path"`
+	Swagger  SwaggerConfig `mapstructure:"swagger"`
 }

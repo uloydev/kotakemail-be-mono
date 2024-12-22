@@ -1,6 +1,8 @@
 package appcontext
 
-import "context"
+import (
+	"context"
+)
 
 type AppContext struct {
 	ctx context.Context
@@ -18,6 +20,12 @@ func (a *AppContext) Context() context.Context {
 
 func (a *AppContext) SetContext(ctx context.Context) {
 	a.ctx = ctx
+}
+
+func (a *AppContext) SpanChild() *AppContext {
+	return &AppContext{
+		ctx: context.WithValue(a.ctx, "span", "child"),
+	}
 }
 
 func (a *AppContext) Set(key AppContextKey, value interface{}) {

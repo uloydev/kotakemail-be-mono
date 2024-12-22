@@ -6,7 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"kotakemail.id/config"
 	"kotakemail.id/pkg/logger"
-	"kotakemail.id/pkg/rest"
+	"kotakemail.id/shared/base/rest"
 )
 
 type RestCommand struct {
@@ -40,14 +40,13 @@ func NewRestCommand(
 
 func (r *RestCommand) Execute() error {
 	r.logger.Info().Msg("starting rest server")
-	router := r.app.Group(r.cfg.Rest.BasePath)
 
 	for _, middleware := range r.middlewares {
-		router.Use(middleware)
+		r.app.Use(middleware)
 	}
 
 	for _, route := range r.routes {
-		route.Register(router)
+		route.Register(r.cfg.Rest.BasePath, r.app)
 	}
 
 	return r.app.Listen(fmt.Sprintf("%s:%s", r.cfg.Rest.Host, r.cfg.Rest.Port))

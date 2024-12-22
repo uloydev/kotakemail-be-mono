@@ -2,15 +2,21 @@ package main
 
 import (
 	"log"
-	"smtpcore/routes"
+	"restapi/routes"
 
 	"kotakemail.id/config"
 	"kotakemail.id/pkg/cmd"
 	"kotakemail.id/pkg/container"
 	appcontext "kotakemail.id/pkg/context"
 	"kotakemail.id/pkg/logger"
+	"kotakemail.id/shared/base/rest/middleware"
 )
 
+// @title Kotak Email API
+// @version 1.0
+// @description Kotak Email Internal Rest API
+// @contact.name Uloydev
+// @contact.email wahyu@uloy.dev
 func main() {
 	ctx := appcontext.NewAppContext()
 	cfg, err := config.NewConfig(ctx, "../../config", "rest-api")
@@ -30,7 +36,13 @@ func main() {
 		appLogger.Fatal().Err(err).Msg("can't connect to storage")
 	}
 
-	container.AddCommand(cmd.NewRestCommand(cfg, appLogger, routes.GetRoutes()))
+	restCmd := cmd.NewRestCommand(
+		cfg,
+		appLogger,
+		routes.GetRoutes(),
+		middleware.RequestIDMiddleware(),
+	)
 
+	container.AddCommand(restCmd)
 	container.Run()
 }

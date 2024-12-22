@@ -6,6 +6,11 @@ rest:
   host: 0.0.0.0
   port: 8080
   base_path: /api/v1
+  swagger:
+    base_path: /
+    file_path: docs/rest-api-v1.json
+    path: "docs"
+    title: "Kotak Email RestAPI"
 
 databases:
   - host: localhost
