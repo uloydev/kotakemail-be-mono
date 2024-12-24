@@ -1,6 +1,8 @@
 package appcontext
 
 type AppContextKey string
+type RepoContextKey string
+type ServiceContextKey string
 
 const (
 	// databasesKey is the key used to store the databases in the context.
@@ -19,4 +21,6 @@ const (
 	EnvironmentKey AppContextKey = "environment"
 	// AppNameKey is the key used to store the app name in the context.
 	AppNameKey AppContextKey = "app_name"
+	// SelfKey is the key used to store the app context in the context.
+	SelfKey AppContextKey = "app_context"
 )

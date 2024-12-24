@@ -13,6 +13,7 @@ import (
 type MongoDB struct {
 	*BaseDatabase
 	client *mongo.Client
+	db     *mongo.Database
 	logger *logger.Logger
 	cfg    *config.DatabaseConfig
 	uri    string
@@ -34,6 +35,7 @@ func NewMongoDB(cfg *config.DatabaseConfig, appLogger *logger.Logger) (Database,
 		cfg:          cfg,
 		logger:       appLogger,
 		client:       client,
+		db:           client.Database(cfg.Database),
 	}
 
 	db.SetName(cfg.Name)
@@ -41,7 +43,7 @@ func NewMongoDB(cfg *config.DatabaseConfig, appLogger *logger.Logger) (Database,
 }
 
 func (m *MongoDB) GetConnection() interface{} {
-	return m.client
+	return m.db
 }
 
 func (m *MongoDB) Shutdown() error {

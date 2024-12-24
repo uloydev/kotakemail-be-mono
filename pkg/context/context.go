@@ -28,6 +28,22 @@ func (a *AppContext) SpanChild() *AppContext {
 	}
 }
 
+func (a *AppContext) SetRepo(key RepoContextKey, value interface{}) {
+	a.ctx = context.WithValue(a.ctx, key, value)
+}
+
+func (a *AppContext) GetRepo(key RepoContextKey) interface{} {
+	return a.ctx.Value(key)
+}
+
+func (a *AppContext) SetService(key ServiceContextKey, value interface{}) {
+	a.ctx = context.WithValue(a.ctx, key, value)
+}
+
+func (a *AppContext) GetService(key ServiceContextKey) interface{} {
+	return a.ctx.Value(key)
+}
+
 func (a *AppContext) Set(key AppContextKey, value interface{}) {
 	a.ctx = context.WithValue(a.ctx, key, value)
 }

@@ -15,9 +15,20 @@ type Config struct {
 	Logging     LoggingConfig    `mapstructure:"logging"`
 }
 
-type GrpcConfig struct {
+type GrpcServerConfig struct {
 	Host string `mapstructure:"host"`
 	Port string `mapstructure:"port"`
+}
+
+type GrpcClientConfig struct {
+	Name string `mapstructure:"name"`
+	Host string `mapstructure:"host"`
+	Port string `mapstructure:"port"`
+}
+
+type GrpcConfig struct {
+	Server  GrpcServerConfig   `mapstructure:"server"`
+	Clients []GrpcClientConfig `mapstructure:"clients"`
 }
 
 func NewConfig(ctx *appcontext.AppContext, path, name string) (c *Config, err error) {

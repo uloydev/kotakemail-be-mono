@@ -1,0 +1,66 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+package email_handler;
+
+option go_package = "kotakemail.id/shared/grpc/email_handler_pb";
+
+service Mailbox {
+    rpc GetMailbox(GetMailboxRequest) returns (MailboxResponse) {}
+    rpc GetMailboxCredentials(GetMailboxCredentialsRequest) returns (MailboxCredentialResponse) {}
+    rpc CreateMailbox(CreateMailboxRequest) returns (MailboxResponse) {}
+    rpc UpdateMailbox(UpdateMailboxRequest) returns (MailboxResponse) {}
+    rpc DeleteMailbox(DeleteMailboxRequest) returns (MailboxResponse) {}
+}
+
+
+message GetMailboxRequest {
+    string id = 1;
+}
+
+message GetMailboxCredentialsRequest {
+    string id = 1;
+}
+
+message CreateMailboxRequest {
+    string userId = 1;
+    string name = 2;
+}
+
+message UpdateMailboxRequest {
+    string id = 1;
+    string name = 3;
+}
+
+message DeleteMailboxRequest {
+    string id = 1;
+}
+
+message MailboxData {
+    string id = 1;
+    string userId = 2;
+    string name = 3;
+    int64 unreadCount = 4;
+    google.protobuf.Timestamp createdAt = 8;
+    optional google.protobuf.Timestamp updatedAt = 9;
+    optional google.protobuf.Timestamp deletedAt = 10;
+}
+
+message MailboxCredentialData {
+    string id = 1;
+    string apiKey = 5;
+    string SMTPUserName = 6;
+    string SMTPPassword = 7;
+}
+
+message MailboxResponse {
+    bool success = 1;
+    string message = 2;
+    optional MailboxData data = 3; 
+}
+
+message MailboxCredentialResponse {
+    bool success = 1;
+    string message = 2;
+    optional MailboxCredentialData data = 3;
+}
